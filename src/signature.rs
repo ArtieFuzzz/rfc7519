@@ -2,12 +2,12 @@ use std::error::Error;
 
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use hmac::{Hmac, Mac};
-use sha2::Sha256;
+use sha2::Sha512;
 
-pub type HmacSha256 = Hmac<Sha256>;
+pub type HmacSha512 = Hmac<Sha512>;
 
 pub fn generate(header: String, claims: String, secret: String) -> String {
-    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
+    let mut mac = HmacSha512::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
 
     let claim_header = vec![header, claims];
 
@@ -24,7 +24,7 @@ pub fn validate(
     signature: String,
     secret: String,
 ) -> Result<bool, Box<dyn Error + Send + Sync>> {
-    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
+    let mut mac = HmacSha512::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
     
     let claim_header = vec![header, claims];
 

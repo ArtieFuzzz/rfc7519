@@ -1,6 +1,6 @@
-mod token;
 mod signature;
 mod structs;
+mod token;
 
 fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let claims = structs::Claims {

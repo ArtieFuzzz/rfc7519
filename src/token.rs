@@ -13,7 +13,7 @@ pub fn generate(
 
     let headers = JWTHeader {
         typ: "JWT".into(),
-        alg: "HS256".into(),
+        alg: "HS512".into(),
     };
 
     let headers_string = URL_SAFE_NO_PAD.encode(to_string(&headers)?);
