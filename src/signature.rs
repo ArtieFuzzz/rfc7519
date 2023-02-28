@@ -6,7 +6,7 @@ use sha2::Sha256;
 
 pub type HmacSha256 = Hmac<Sha256>;
 
-pub fn generate_sig(header: String, claims: String, secret: String) -> String {
+pub fn generate(header: String, claims: String, secret: String) -> String {
     let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
 
     let claim_header = vec![header, claims];
@@ -18,7 +18,7 @@ pub fn generate_sig(header: String, claims: String, secret: String) -> String {
     URL_SAFE_NO_PAD.encode(result.into_bytes())
 }
 
-pub fn validate_sig(
+pub fn validate(
     header: String,
     claims: String,
     signature: String,

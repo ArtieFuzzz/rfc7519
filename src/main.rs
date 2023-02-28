@@ -1,4 +1,4 @@
-mod encode_decode;
+mod token;
 mod signature;
 mod structs;
 
@@ -15,11 +15,11 @@ fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     let secret = "owowhat'sthis";
 
-    let token = encode_decode::encode_token(claims, secret.into())?;
+    let token = token::generate(claims, secret.into())?;
 
     println!("{token}");
 
-    let valid = encode_decode::validate(token, secret.into())?;
+    let valid = token::validate(token, secret.into())?;
 
     println!("{valid}");
 

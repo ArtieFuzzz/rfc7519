@@ -1,11 +1,11 @@
 use std::error::Error;
 
-use super::signature::{generate_sig, validate_sig};
+use super::signature::{generate as generate_sig, validate as validate_sig};
 use super::structs::{Claims, JWTHeader};
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use serde_json::to_string;
 
-pub fn encode_token(
+pub fn generate(
     claims: Claims,
     secret: String,
 ) -> Result<String, Box<dyn Error + Send + Sync>> {
