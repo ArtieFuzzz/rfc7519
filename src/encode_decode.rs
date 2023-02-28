@@ -17,7 +17,7 @@ pub fn encode_token(
     };
 
     let headers_string = URL_SAFE_NO_PAD.encode(to_string(&headers)?);
-    let signature = generate_sig(claims_string.clone(), headers_string.clone(), secret);
+    let signature = generate_sig(headers_string.clone(), claims_string.clone(), secret);
 
     let token_parts = vec![headers_string, claims_string, signature];
 
