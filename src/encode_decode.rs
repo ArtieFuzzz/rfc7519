@@ -1,27 +1,42 @@
 use std::error::Error;
 
-use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+use super::signature::{generate_sig, validate_sig};
 use super::structs::{Claims, JWTHeader};
-use super::signature::generate_sig;
+use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use serde_json::to_string;
 
+pub fn encode_token(
+    claims: Claims,
+    secret: String,
+) -> Result<String, Box<dyn Error + Send + Sync>> {
+    let claims_string = URL_SAFE_NO_PAD.encode(to_string(&claims)?);
 
+    let headers = JWTHeader {
+        typ: "JWT".into(),
+        alg: "HS256".into(),
+    };
 
-pub fn encode_token(claims: Claims, secret: impl Into<String>) -> Result<String, Box<dyn Error + Send + Sync>> {
-  let claims_string = URL_SAFE_NO_PAD.encode(to_string(&claims)?);
-  
-  let headers = JWTHeader {
-    typ: "JWT".into(),
-    alg: "HS256".into(),
-  };
+    let headers_string = URL_SAFE_NO_PAD.encode(to_string(&headers)?);
+    let signature = generate_sig(claims_string.clone(), headers_string.clone(), secret);
 
-  let headers_string = URL_SAFE_NO_PAD.encode(to_string(&headers)?);
+    let token_parts = vec![headers_string, claims_string, signature];
 
-  let secret = secret.into();
+    Ok(token_parts.join("."))
+}
 
-  let signature = generate_sig(claims_string.clone(), headers_string.clone(), secret);
+/// Validate a token.
+///
+/// Returns a boolean indicating whether the token is valid.
+pub fn validate(token: String, secret: String) -> Result<bool, Box<dyn Error + Send + Sync>> {
+    let token: Vec<String> = token.split('.').map(|s| s.to_string()).collect();
 
-  let token_parts = vec![headers_string, claims_string, signature];
+    if token.len() <= 1 {
+        return Ok(false);
+    }
 
-  Ok(token_parts.join("."))
+    if token.len() > 3 {
+        return Ok(false);
+    }
+
+    validate_sig(token[2].clone(), secret)
 }

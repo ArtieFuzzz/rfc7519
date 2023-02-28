@@ -1,6 +1,6 @@
 mod encode_decode;
-mod structs;
 mod signature;
+mod structs;
 
 fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let claims = structs::Claims {
@@ -13,9 +13,15 @@ fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         jti: None,
     };
 
-    let token = encode_decode::encode_token(claims, "owowhat'sthis")?;
+    let secret = "owowhat'sthis";
+
+    let token = encode_decode::encode_token(claims, secret.into())?;
 
     println!("{token}");
+
+    let valid = encode_decode::validate(token, secret.into())?;
+
+    println!("{valid}");
 
     Ok(())
 }
