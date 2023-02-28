@@ -21,15 +21,22 @@ pub fn generate_sig(claims: String, header: String, secret: String) -> String {
 }
 
 pub fn validate_sig(
+    claims: String,
+    header: String,
     signature: String,
     secret: String,
 ) -> Result<bool, Box<dyn Error + Send + Sync>> {
-    let mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
+    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
+    
+    let claim_header = vec![header, claims];
+
+    mac.update(claim_header.join(".").as_bytes());
+    
     let sig = URL_SAFE_NO_PAD.decode(signature)?;
     println!("{sig:?}");
     println!("{:?}", (&*sig));
 
-    match mac.verify((&*sig).into()) {
+    match mac.verify_slice(&sig) {
         Ok(_) => Ok(true),
         Err(why) => {
             println!("{why:?} {why}");

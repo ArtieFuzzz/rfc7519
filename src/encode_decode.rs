@@ -38,5 +38,5 @@ pub fn validate(token: String, secret: String) -> Result<bool, Box<dyn Error + S
         return Ok(false);
     }
 
-    validate_sig(token[2].clone(), secret)
+    validate_sig(token[0].clone(), token[1].clone(), token[2].clone(), secret)
 }
