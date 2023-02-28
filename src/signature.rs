@@ -10,11 +10,6 @@ pub fn generate_sig(claims: String, header: String, secret: String) -> String {
 
     let claim_header = vec![header, claims];
 
-    // let mut claim_header = String::from("");
-
-    // claim_header.push_str(&header);
-    // claim_header.push_str(&claims);
-
     mac.update(claim_header.join(".").as_bytes());
 
     let result = mac.finalize();
