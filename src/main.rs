@@ -1,3 +1,4 @@
+mod cipher;
 mod signature;
 mod structs;
 mod token;

@@ -1,10 +1,8 @@
 use std::error::Error;
 
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
-use hmac::{Hmac, Mac};
-use sha2::Sha512;
 
-pub type HmacSha512 = Hmac<Sha512>;
+use crate::cipher::{HmacSha512, Mac};
 
 pub fn generate(header: String, claims: String, secret: String) -> String {
     let mut mac = HmacSha512::new_from_slice(secret.as_bytes()).expect("Error creating HMAC");
@@ -35,8 +33,7 @@ pub fn validate(
     match mac.verify_slice(&sig) {
         Ok(_) => Ok(true),
         Err(why) => {
-            println!("{why:?} {why}");
-            Ok(false)
+          Err(why.into())
     }
   }
 }
