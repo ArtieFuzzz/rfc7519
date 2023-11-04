@@ -1,22 +1,22 @@
 use std::error::Error;
 
-use crate::cipher::WithType;
+use super::algo::AlgoToString;
 
 use super::signature::{generate as generate_sig, validate as validate_sig};
-use super::structs::{Claims, JWTHeader};
+use super::payload::{Claims, JWTHeader};
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
 use hmac::Mac;
 use serde_json::to_string;
 
 pub fn generate<M>(mac: M, claims: Claims) -> Result<String, Box<dyn Error + Send + Sync>>
 where
-    M: Mac + WithType + Clone,
+    M: Mac + AlgoToString + Clone,
 {
     let claims_string = URL_SAFE_NO_PAD.encode(to_string(&claims)?);
 
     let headers = JWTHeader {
         typ: "JWT".into(),
-        alg: mac.clone().cipher_type(),
+        alg: mac.clone().algorithm(),
     };
 
     let headers_string = URL_SAFE_NO_PAD.encode(to_string(&headers)?);

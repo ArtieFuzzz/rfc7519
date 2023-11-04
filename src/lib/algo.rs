@@ -2,14 +2,14 @@ use sha2::{Sha256, Sha384, Sha512};
 
 use hmac::Hmac;
 
-pub trait WithType {
-    fn cipher_type(self) -> String;
+pub trait AlgoToString {
+    fn algorithm(self) -> String;
 }
 
 macro_rules! impl_cipher {
     ($name:tt, $type:ty) => {
-        impl WithType for Hmac<$type> {
-            fn cipher_type(self) -> String {
+        impl AlgoToString for Hmac<$type> {
+            fn algorithm(self) -> String {
                 $name.to_string()
             }
         }
